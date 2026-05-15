@@ -88,18 +88,10 @@ CSS = """
       display: grid;
       grid-template-columns: minmax(340px, 1fr) minmax(0, 1.35fr);
       gap: 18px;
-      align-items: stretch;
+      align-items: start;
     }
 
-    .main-column {
-      min-width: 0;
-      display: flex;
-    }
-
-    .main-column > .view-panel {
-      width: 100%;
-      min-height: 100%;
-    }
+    .main-column { min-width: 0; }
 
     .view-panel[hidden] { display: none; }
 
@@ -158,7 +150,6 @@ CSS = """
     .about-card {
       position: sticky;
       top: 24px;
-      height: 100%;
     }
 
     .about-header {
@@ -383,9 +374,7 @@ CSS = """
     @media (max-width: 760px) {
       body          { padding: 20px 14px 48px; }
       .content-grid { grid-template-columns: 1fr; }
-      .about-card   { position: static; height: auto; }
-      .main-column  { display: block; }
-      .main-column > .view-panel { min-height: auto; }
+      .about-card   { position: static; }
       .about-header { align-items: center; }
       .navbar       { width: 100%; justify-content: space-between; align-self: stretch; }
       .nav-btn      { flex: 1; text-align: center; padding: 7px 8px; }
