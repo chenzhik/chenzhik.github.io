@@ -16,7 +16,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from data.about import AVATAR, BIO, EMAIL, GITHUB, NAME, TITLE
+from data.about import AVATAR, BIO, EMAIL, GITHUB, GOOGLE_SCHOLAR, NAME, TITLE, TITLE_EXTRA
 from data.archive import ARCHIVE
 from data.avatar import GREETING
 from render import render_page
@@ -24,8 +24,10 @@ from render import render_page
 SITE = {
     "name": NAME,
     "title": TITLE,
+    "title_extra": TITLE_EXTRA,
     "bio": BIO,
     "avatar": AVATAR,
+    "google_scholar": GOOGLE_SCHOLAR,
     "github": GITHUB,
     "email": EMAIL,
 }

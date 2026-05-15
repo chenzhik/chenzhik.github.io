@@ -404,7 +404,7 @@ CHAT_JS = """
     [/who|name|yourself/i,      "I'm the AI avatar on this page. I can tell you about the person behind this site - a developer passionate about clean code and open source."],
     [/work|project|build/i,     "They work on a range of projects - from developer tools to writing about things they learn. Check the Archive section for details!"],
     [/skill|language|tech/i,    "Python is a favourite, but they're comfortable across the stack. Always learning something new."],
-    [/contact|email|reach/i,    "You can reach them via the links in the About section - GitHub and email are both there."],
+    [/contact|email|mail|gmail|reach|联系方式|联系|邮箱|邮件/i, "chenzhik98@gmail.com"],
     [/archive|post|blog/i,      "The Archive section below has posts and projects. Give it a scroll!"],
     [/thank/i,                  "You're welcome! Feel free to ask anything else."],
   ];
@@ -412,6 +412,9 @@ CHAT_JS = """
   const FALLBACK = "That's a great question! For more details, check the About section or reach out directly.";
 
   function getReply(text) {
+    for (const [pattern, reply] of REPLIES) {
+      if (pattern.test(text)) return reply;
+    }
     return FIXED_REPLY;
   }
 
@@ -513,11 +516,15 @@ def render_page(site, greeting, archive):
     archive_html = _archive_rows(archive)
     name = _text(site["name"])
     title = _text(site["title"])
+    title_extra = _text(site["title_extra"])
     bio = _text(site["bio"])
+    google_scholar_url = _attr(site["google_scholar"])
+    google_scholar_label = "Google Scholar"
     github_url = _attr(site["github"])
-    github_label = _text(site["github"].replace("https://", ""))
+    github_label = "Github"
     email = _text(site["email"])
     email_href = _attr(site["email"])
+    email_label = "Gmail"
     greeting_text = _text(greeting)
 
     return f"""<!DOCTYPE html>
@@ -547,11 +554,18 @@ def render_page(site, greeting, archive):
           <div class="about-meta">
             <h1>{name}</h1>
             <span class="title-tag">{title}</span>
+            <span class="title-tag">{title_extra}</span>
           </div>
         </div>
         <hr class="about-divider" />
         <p class="bio">{bio}</p>
         <div class="contacts">
+          <a href="{google_scholar_url}" class="contact-chip" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3zm0 14.3L5 13.48V17c0 2.2 3.13 4 7 4s7-1.8 7-4v-3.52l-7 3.82z"/>
+            </svg>
+            {google_scholar_label}
+          </a>
           <a href="{github_url}" class="contact-chip" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 .3C5.4.3 0 5.7 0 12.3c0 5.3 3.4 9.8 8.2 11.4.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6C20.6 22.1 24 17.6 24 12.3 24 5.7 18.6.3 12 .3z"/>
@@ -562,7 +576,7 @@ def render_page(site, greeting, archive):
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
             </svg>
-            {email}
+            {email_label}
           </a>
         </div>
       </aside>
