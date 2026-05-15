@@ -299,6 +299,7 @@
     }
 
     .chat-send-btn:hover { background: #115e59; transform: translateY(-1px); }
+    .chat-send-btn:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
     .chat-send-btn svg { width: 15px; height: 15px; fill: currentColor; }
 
     /* Archive */
@@ -404,7 +405,7 @@
               <path d="M12 2L13.09 8.26L19 7L14.74 11.74L21 13L14.74 14.26L19 19L13.09 15.74L12 22L10.91 15.74L5 19L9.26 14.26L3 13L9.26 11.74L5 7L10.91 8.26L12 2Z" fill="currentColor"/>
             </svg>
           </div>
-          <div class="chat-bubble chat-bubble--ai">Hi! I'm Caspers's Agent. I build things for the web and beyond. </div>
+          <div class="chat-bubble chat-bubble--ai">Hi! I'm Casper, Zhikai's Agent. I build things for the web and beyond. </div>
         </div>
       </div>
 
@@ -486,6 +487,9 @@
   const sendBtn   = document.getElementById('chatSend');
   const aboutCard = document.getElementById('about');
   const avatarPanel = document.getElementById('avatar');
+  const MAX_TURNS = 3;
+  const FIXED_REPLY = 'self evolving now...';
+  let turnCount = 0;
 
   // Simple keyword-based replies - edit as you like.
   const REPLIES = [
@@ -501,10 +505,7 @@
   const FALLBACK = "That's a great question! For more details, check the About section or reach out directly.";
 
   function getReply(text) {
-    for (const [pattern, reply] of REPLIES) {
-      if (pattern.test(text)) return reply;
-    }
-    return FALLBACK;
+    return FIXED_REPLY;
   }
 
   function escapeHTML(text) {
@@ -561,6 +562,9 @@
   function send() {
     const text = input.value.trim();
     if (!text) return;
+    if (turnCount >= MAX_TURNS) return;
+
+    turnCount += 1;
     input.value = '';
     addBubble('user', text);
     showTyping();
@@ -568,6 +572,11 @@
     setTimeout(() => {
       removeTyping();
       addBubble('ai', getReply(text));
+      if (turnCount >= MAX_TURNS) {
+        input.disabled = true;
+        sendBtn.disabled = true;
+        input.placeholder = 'self evolving now...';
+      }
     }, delay);
   }
 

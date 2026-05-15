@@ -336,6 +336,7 @@ CSS = """
     }
 
     .chat-send-btn:hover { background: #115e59; transform: translateY(-1px); }
+    .chat-send-btn:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
     .chat-send-btn svg { width: 15px; height: 15px; fill: currentColor; }
 
     /* Archive */
@@ -393,6 +394,9 @@ CHAT_JS = """
   const sendBtn   = document.getElementById('chatSend');
   const aboutCard = document.getElementById('about');
   const avatarPanel = document.getElementById('avatar');
+  const MAX_TURNS = 3;
+  const FIXED_REPLY = 'self evolving now...';
+  let turnCount = 0;
 
   // Simple keyword-based replies - edit as you like.
   const REPLIES = [
@@ -408,10 +412,7 @@ CHAT_JS = """
   const FALLBACK = "That's a great question! For more details, check the About section or reach out directly.";
 
   function getReply(text) {
-    for (const [pattern, reply] of REPLIES) {
-      if (pattern.test(text)) return reply;
-    }
-    return FALLBACK;
+    return FIXED_REPLY;
   }
 
   function escapeHTML(text) {
@@ -468,6 +469,9 @@ CHAT_JS = """
   function send() {
     const text = input.value.trim();
     if (!text) return;
+    if (turnCount >= MAX_TURNS) return;
+
+    turnCount += 1;
     input.value = '';
     addBubble('user', text);
     showTyping();
@@ -475,6 +479,11 @@ CHAT_JS = """
     setTimeout(() => {
       removeTyping();
       addBubble('ai', getReply(text));
+      if (turnCount >= MAX_TURNS) {
+        input.disabled = true;
+        sendBtn.disabled = true;
+        input.placeholder = 'self evolving now...';
+      }
     }, delay);
   }
 
