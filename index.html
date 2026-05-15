@@ -56,7 +56,9 @@
 
     .main-column { min-width: 0; }
 
-    .view-panel[hidden] { display: none; }
+    .archive-card {
+      grid-column: 1 / -1;
+    }
 
     .card {
       background: var(--surface);
@@ -104,16 +106,8 @@
       background: var(--accent-dim);
     }
 
-    .nav-btn.is-active {
-      color: var(--accent);
-      background: var(--accent-dim);
-    }
-
     /* About */
-    .about-card {
-      position: sticky;
-      top: 24px;
-    }
+    .about-card { position: static; }
 
     .about-header {
       display: flex;
@@ -212,8 +206,7 @@
       padding: 20px;
       display: flex; flex-direction: column; gap: 14px;
       flex: 1;
-      min-height: 260px;
-      max-height: 380px;
+      min-height: 0;
       overflow-y: auto;
     }
 
@@ -338,6 +331,7 @@
       body          { padding: 20px 14px 48px; }
       .content-grid { grid-template-columns: 1fr; }
       .about-card   { position: static; }
+      .chat-card    { height: auto !important; }
       .about-header { align-items: center; }
       .navbar       { width: 100%; justify-content: space-between; align-self: stretch; }
       .nav-btn      { flex: 1; text-align: center; padding: 7px 8px; }
@@ -360,8 +354,8 @@
     <!-- Nav -->
     <nav class="navbar">
       <a class="nav-btn" href="#about">About</a>
-      <a class="nav-btn" href="#archive" data-view="archive">Archive</a>
-      <a class="nav-btn is-active" href="#avatar" data-view="avatar" aria-current="page">Avatar</a>
+      <a class="nav-btn" href="#avatar">Avatar</a>
+      <a class="nav-btn" href="#archive">Archive</a>
     </nav>
 
     <div class="content-grid">
@@ -369,14 +363,14 @@
       <aside id="about" class="card about-card">
         <div class="section-label">About</div>
         <div class="about-header">
-          <div class="about-avatar"><img src="data/profile.jpg" alt="Zhikai Chen" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><div class="avatar-circle" style="display:none;">Z</div></div>
+          <div class="about-avatar"><img src="data/thumbnail.jpg" alt="Zhikai Chen" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><div class="avatar-circle" style="display:none;">Z</div></div>
           <div class="about-meta">
             <h1>Zhikai Chen</h1>
             <span class="title-tag">Human-Being</span>
           </div>
         </div>
         <hr class="about-divider" />
-        <p class="bio">I graduated from USTC at 2025. Working on multimodal understanding now. </p>
+        <p class="bio">I graduated from USTC at 2025. During 2019-2025, I worked as an research intern in MSRA and HiDream.ai.</p>
         <div class="contacts">
           <a href="https://github.com/chenzhik" class="contact-chip" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -394,11 +388,50 @@
       </aside>
 
       <div class="main-column">
-        <!-- Archive -->
-        <section id="archive" class="card view-panel" data-panel="archive" hidden>
-          <div class="section-label">Archive</div>
-          <div class="archive-list">
-            
+        <!-- Avatar: interactive AI chat -->
+        <section id="avatar" class="card chat-card">
+      <div class="chat-header">
+        <div class="chat-header-dot"></div>
+        <span class="chat-header-title">AVATAR</span>
+        <span class="chat-header-sub">always online</span>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <!-- greeting -->
+        <div class="chat-row chat-row--ai">
+          <div class="chat-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L13.09 8.26L19 7L14.74 11.74L21 13L14.74 14.26L19 19L13.09 15.74L12 22L10.91 15.74L5 19L9.26 14.26L3 13L9.26 11.74L5 7L10.91 8.26L12 2Z" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="chat-bubble chat-bubble--ai">Hi! I'm Caspers's Agent. I build things for the web and beyond. </div>
+        </div>
+      </div>
+
+      <div class="chat-input-bar">
+        <div class="chat-input-wrap">
+          <input
+            id="chatInput"
+            class="chat-input-real"
+            type="text"
+            placeholder="Ask me anything..."
+            autocomplete="off"
+          />
+        </div>
+        <button class="chat-send-btn" id="chatSend" aria-label="Send">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+          </svg>
+        </button>
+      </div>
+        </section>
+      </div>
+
+      <!-- Archive -->
+      <section id="archive" class="card archive-card">
+        <div class="section-label">Archive</div>
+        <div class="archive-list">
+          
         <div class="archive-item">
           <span class="archive-date">2025-05</span>
           <div class="archive-body">
@@ -438,47 +471,8 @@
             <p class="archive-desc">The tools, fonts, and config files I use every day.</p>
           </div>
         </div>
-          </div>
-        </section>
-
-        <!-- Avatar: interactive AI chat -->
-        <section id="avatar" class="card chat-card view-panel" data-panel="avatar">
-      <div class="chat-header">
-        <div class="chat-header-dot"></div>
-        <span class="chat-header-title">AVATAR</span>
-        <span class="chat-header-sub">always online</span>
-      </div>
-
-      <div class="chat-messages" id="chatMessages">
-        <!-- greeting -->
-        <div class="chat-row chat-row--ai">
-          <div class="chat-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L13.09 8.26L19 7L14.74 11.74L21 13L14.74 14.26L19 19L13.09 15.74L12 22L10.91 15.74L5 19L9.26 14.26L3 13L9.26 11.74L5 7L10.91 8.26L12 2Z" fill="currentColor"/>
-            </svg>
-          </div>
-          <div class="chat-bubble chat-bubble--ai">Hi! I'm Caspers's Agent. I build things for the web and beyond. </div>
         </div>
-      </div>
-
-      <div class="chat-input-bar">
-        <div class="chat-input-wrap">
-          <input
-            id="chatInput"
-            class="chat-input-real"
-            type="text"
-            placeholder="Ask me anything..."
-            autocomplete="off"
-          />
-        </div>
-        <button class="chat-send-btn" id="chatSend" aria-label="Send">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
-          </svg>
-        </button>
-      </div>
-        </section>
-      </div>
+      </section>
     </div>
 
     <footer class="footer">
@@ -490,8 +484,8 @@
   const messages  = document.getElementById('chatMessages');
   const input     = document.getElementById('chatInput');
   const sendBtn   = document.getElementById('chatSend');
-  const panels    = document.querySelectorAll('[data-panel]');
-  const viewLinks = document.querySelectorAll('[data-view]');
+  const aboutCard = document.getElementById('about');
+  const avatarPanel = document.getElementById('avatar');
 
   // Simple keyword-based replies - edit as you like.
   const REPLIES = [
@@ -577,30 +571,22 @@
     }, delay);
   }
 
-  function showPanel(name) {
-    panels.forEach(panel => {
-      panel.hidden = panel.dataset.panel !== name;
-    });
+  function syncAvatarHeight() {
+    if (!aboutCard || !avatarPanel) return;
 
-    viewLinks.forEach(link => {
-      const active = link.dataset.view === name;
-      link.classList.toggle('is-active', active);
-      link.setAttribute('aria-current', active ? 'page' : 'false');
-    });
+    if (window.matchMedia('(max-width: 760px)').matches) {
+      avatarPanel.style.height = '';
+      return;
+    }
 
-    const panel = document.querySelector(`[data-panel="${name}"]`);
-    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    avatarPanel.style.height = aboutCard.offsetHeight + 'px';
   }
-
-  viewLinks.forEach(link => {
-    link.addEventListener('click', event => {
-      event.preventDefault();
-      showPanel(link.dataset.view);
-    });
-  });
 
   sendBtn.addEventListener('click', send);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  window.addEventListener('resize', syncAvatarHeight);
+  window.addEventListener('load', syncAvatarHeight);
+  syncAvatarHeight();
 </script>
 </body>
 </html>

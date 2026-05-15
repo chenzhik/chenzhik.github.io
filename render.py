@@ -93,7 +93,9 @@ CSS = """
 
     .main-column { min-width: 0; }
 
-    .view-panel[hidden] { display: none; }
+    .archive-card {
+      grid-column: 1 / -1;
+    }
 
     .card {
       background: var(--surface);
@@ -141,16 +143,8 @@ CSS = """
       background: var(--accent-dim);
     }
 
-    .nav-btn.is-active {
-      color: var(--accent);
-      background: var(--accent-dim);
-    }
-
     /* About */
-    .about-card {
-      position: sticky;
-      top: 24px;
-    }
+    .about-card { position: static; }
 
     .about-header {
       display: flex;
@@ -249,8 +243,7 @@ CSS = """
       padding: 20px;
       display: flex; flex-direction: column; gap: 14px;
       flex: 1;
-      min-height: 260px;
-      max-height: 380px;
+      min-height: 0;
       overflow-y: auto;
     }
 
@@ -375,6 +368,7 @@ CSS = """
       body          { padding: 20px 14px 48px; }
       .content-grid { grid-template-columns: 1fr; }
       .about-card   { position: static; }
+      .chat-card    { height: auto !important; }
       .about-header { align-items: center; }
       .navbar       { width: 100%; justify-content: space-between; align-self: stretch; }
       .nav-btn      { flex: 1; text-align: center; padding: 7px 8px; }
@@ -397,8 +391,8 @@ CHAT_JS = """
   const messages  = document.getElementById('chatMessages');
   const input     = document.getElementById('chatInput');
   const sendBtn   = document.getElementById('chatSend');
-  const panels    = document.querySelectorAll('[data-panel]');
-  const viewLinks = document.querySelectorAll('[data-view]');
+  const aboutCard = document.getElementById('about');
+  const avatarPanel = document.getElementById('avatar');
 
   // Simple keyword-based replies - edit as you like.
   const REPLIES = [
@@ -484,30 +478,22 @@ CHAT_JS = """
     }, delay);
   }
 
-  function showPanel(name) {
-    panels.forEach(panel => {
-      panel.hidden = panel.dataset.panel !== name;
-    });
+  function syncAvatarHeight() {
+    if (!aboutCard || !avatarPanel) return;
 
-    viewLinks.forEach(link => {
-      const active = link.dataset.view === name;
-      link.classList.toggle('is-active', active);
-      link.setAttribute('aria-current', active ? 'page' : 'false');
-    });
+    if (window.matchMedia('(max-width: 760px)').matches) {
+      avatarPanel.style.height = '';
+      return;
+    }
 
-    const panel = document.querySelector(`[data-panel="${name}"]`);
-    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    avatarPanel.style.height = aboutCard.offsetHeight + 'px';
   }
-
-  viewLinks.forEach(link => {
-    link.addEventListener('click', event => {
-      event.preventDefault();
-      showPanel(link.dataset.view);
-    });
-  });
 
   sendBtn.addEventListener('click', send);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  window.addEventListener('resize', syncAvatarHeight);
+  window.addEventListener('load', syncAvatarHeight);
+  syncAvatarHeight();
 """
 
 
@@ -539,8 +525,8 @@ def render_page(site, greeting, archive):
     <!-- Nav -->
     <nav class="navbar">
       <a class="nav-btn" href="#about">About</a>
-      <a class="nav-btn" href="#archive" data-view="archive">Archive</a>
-      <a class="nav-btn is-active" href="#avatar" data-view="avatar" aria-current="page">Avatar</a>
+      <a class="nav-btn" href="#avatar">Avatar</a>
+      <a class="nav-btn" href="#archive">Archive</a>
     </nav>
 
     <div class="content-grid">
@@ -573,16 +559,8 @@ def render_page(site, greeting, archive):
       </aside>
 
       <div class="main-column">
-        <!-- Archive -->
-        <section id="archive" class="card view-panel" data-panel="archive" hidden>
-          <div class="section-label">Archive</div>
-          <div class="archive-list">
-            {archive_html}
-          </div>
-        </section>
-
         <!-- Avatar: interactive AI chat -->
-        <section id="avatar" class="card chat-card view-panel" data-panel="avatar">
+        <section id="avatar" class="card chat-card">
       <div class="chat-header">
         <div class="chat-header-dot"></div>
         <span class="chat-header-title">AVATAR</span>
@@ -619,6 +597,14 @@ def render_page(site, greeting, archive):
       </div>
         </section>
       </div>
+
+      <!-- Archive -->
+      <section id="archive" class="card archive-card">
+        <div class="section-label">Archive</div>
+        <div class="archive-list">
+          {archive_html}
+        </div>
+      </section>
     </div>
 
     <footer class="footer">
